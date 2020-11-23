@@ -1,7 +1,7 @@
 /************************************************
  * ppmtovtx v1.3                                *
  * (c) 2002 Unsatisfactory Software/Chris Young *
- * http://www.unsatisfactory.freeserve.co.uk    *
+ * https://www.unsatisfactorysoftware.co.uk     *
  *                                              *
  * All use of this program is at your own risk. *
  * No modified binaries of this code may be     *
@@ -16,8 +16,8 @@
 void main(int argc, char *argv[])
 {
     FILE *fp1, *fp2;
-    unsigned char esc=27,data[17281],screen[17281],colour[9],base=80,bkg=0,sepc=90,holdc=94,bkgc=93,bkgr=92;
-    int threshold,count,count2,ptrd,ptrs,mosaic,result,textdata,chars,best,a,pbest=0,height,datlen;
+    unsigned char esc=27,header[13],*data,*screen,colour[9],base=80,bkg=0,sepc=90,holdc=94,bkgc=93,bkgr=92;
+    int threshold,count,count2,ptrd,ptrs,mosaic,result,textdata,chars,best=0,a,pbest=0,height,datlen;
     char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0;
     char *ver = "ppmtovtx 1.3 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.3 (01.08.2002)\0$STACK:50000\0";
 
@@ -101,7 +101,7 @@ void main(int argc, char *argv[])
 		  }
 
 			/* read header */
-        result=fread(data,13,1,fp1);
+        result=fread(header,13,1,fp1);
         if(result!=1)
         {
             printf("Error reading %s\n",argv[1]);
@@ -110,14 +110,33 @@ void main(int argc, char *argv[])
             exit(1);
         };
 
-			height=atoi(&data[6]);
+			height=atoi(&header[6]);
          datlen=240*height;  /*17280 for 72pix height*/
 			height=height/3;
         printf("Reading PPM file... [40x%d]\n",height);
+
+        screen = malloc(datlen);
+        if(screen == NULL)
+        {
+            printf("Error allocating memory\n");
+				fclose(fp1);
+				fclose(fp2);
+            exit(1);
+        };
+
         result=fread(screen,datlen,1,fp1);
         if(result!=1)
         {
             printf("Error reading %s\n",argv[1]);
+				fclose(fp1);
+				fclose(fp2);
+            exit(1);
+        };
+
+        data = malloc(datlen);
+        if(data == NULL)
+        {
+            printf("Error allocating memory\n");
 				fclose(fp1);
 				fclose(fp2);
             exit(1);
@@ -157,7 +176,7 @@ void main(int argc, char *argv[])
 
         printf("Mapping colours...\n");
 
-        for(count=0;count<datlen;count=count+3)
+        for(count=0;count<(datlen-3);count+=3)
         {
 
 /* colours:
@@ -193,7 +212,7 @@ textdata=0;
 			count2=0;
 			chars=0;
 
-        for(count=0;count<(240*height);count=count+6) /* 5760 */
+        for(count=0;count<(240*height);count+=6) /* 5760 */
         {
 
 if(chars==0)
@@ -245,6 +264,7 @@ if(chars==0)
             count2++;
             chars++;
             count=count+6;
+
 	}
 pbest=0;
 }
@@ -282,6 +302,7 @@ for(a=0;a<8;a++)
 			best=a;
 		}
 }
+
 	if(best==bkg || colour[best]==0) /* || */
 	{
 		best=pbest;
@@ -431,6 +452,8 @@ for(a=0;a<8;a++)
 
         fclose(fp1);
         fclose(fp2);
+        free(data);
+        free(screen);
 
 		exit(0);
     };
