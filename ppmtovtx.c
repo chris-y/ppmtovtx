@@ -12,12 +12,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void main(int argc, char *argv[])
 {
     FILE *fp1, *fp2;
     unsigned char esc=27,header[13],*data,*screen,colour[9],base=80,bkg=0,sepc=90,holdc=94,bkgc=93,bkgr=92;
     int threshold,count,count2,ptrd,ptrs,mosaic,result,textdata,chars,best=0,a,pbest=0,height,datlen;
+    bool tti=false;
     char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0;
     char *ver = "ppmtovtx 1.3 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.3 (01.08.2002)\0$STACK:50000\0";
 
@@ -29,7 +31,7 @@ void main(int argc, char *argv[])
     {
         printf("ppmtovtx <input file> <output file> [options [threshold]]\n\n");
         printf("Where:   input file  80 pixel wide binary PPM (P6), 69 pixel height for 23 rows\n");
-        printf("         output file Filename to save output as, use extension .bin or .vtx\n");
+        printf("         output file Filename to save output as, use extension .bin/.vtx/.tti\n");
         printf("         options     One or more of {SHADKRGYBMCW} (see below)\n");
         printf("         threshold   Colour detection level 0-255\n\n");
 		  printf("Options: S Separate                        K Black background (default)\n");
@@ -430,23 +432,52 @@ for(a=0;a<8;a++)
         printf("Writing CEPT-3 file in ");
         if(format==NULL)
         {
-        	printf(".bin/.vid format...\n");
+		format = strstr(argv[2],".tti");
+		if(format == NULL) {
+	        	printf(".bin/.vid format...\n");
+		} else {
+	        	printf(".tti format...\n");
+			tti = true;
+			fprintf(fp2,"PN,10000\n");
+			fprintf(fp2,"DE,Created with ppmtovtx\n");
+			fprintf(fp2,"SC,0000\n");
+		}
         }
         else
         {
         	printf(".vtx format...\n");
         }
 
-        result=fwrite(data,count2,1,fp2); /* 960 */
+	if(tti == false) {
+	        result=fwrite(data,count2,1,fp2); /* 960 */
 
-        if(result!=1)
-        {
-            printf("Error writing to %s\n",argv[2]);
-  				fclose(fp1);
-				fclose(fp2);
+	        if(result!=1)
+	        {
+	            printf("Error writing to %s\n",argv[2]);
+	  				fclose(fp1);
+					fclose(fp2);
 
-            exit(1);
-        };
+	            exit(1);
+	        };
+	} else {
+		for(a=0;a<height;a++) {
+			fprintf(fp2,"OL,%ld,",a);
+			result=fwrite(data+(40*a),40,1,fp2);
+
+		        if(result!=1)
+		        {
+            		printf("Error writing to %s\n",argv[2]);
+  						fclose(fp1);
+						fclose(fp2);
+
+		            exit(1);
+       			 }
+
+			fprintf(fp2,"\n");
+		}
+	}
+
+
 
         printf("Finished.\n");
 
