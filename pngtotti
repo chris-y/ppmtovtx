@@ -1,0 +1,7 @@
+#!/bin/bash
+file=$1
+args=$2
+
+pngtopnm $file | pnmscale -xsize 80 -ysize 72 >/tmp/pngtotti.ppm
+./ppmtovtx /tmp/pngtotti.ppm $file.tti $args
+rm /tmp/pngtotti.ppm

@@ -1,5 +1,5 @@
 /************************************************
- * ppmtovtx v1.3                                *
+ * ppmtovtx v1.4                                *
  * (c) 2002 Unsatisfactory Software/Chris Young *
  * https://www.unsatisfactorysoftware.co.uk     *
  *                                              *
@@ -21,7 +21,7 @@ void main(int argc, char *argv[])
     int threshold,count,count2,ptrd,ptrs,mosaic,result,textdata,chars,best=0,a,pbest=0,height,datlen;
     bool tti=false;
     char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0;
-    char *ver = "ppmtovtx 1.3 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.3 (01.08.2002)\0$STACK:50000\0";
+    char *ver = "ppmtovtx 1.4 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.4 (23.11.2020)\0$STACK:50000\0";
 
 	threshold=170; /*50;*/ /* 180; */
 
@@ -30,7 +30,7 @@ void main(int argc, char *argv[])
     if(argc<3)
     {
         printf("ppmtovtx <input file> <output file> [options [threshold]]\n\n");
-        printf("Where:   input file  80 pixel wide binary PPM (P6), 69 pixel height for 23 rows\n");
+        printf("Where:   input file  80 pixel wide binary PPM (P6), 72 pixel height for 24 rows\n");
         printf("         output file Filename to save output as, use extension .bin/.vtx/.tti\n");
         printf("         options     One or more of {SHADKRGYBMCW} (see below)\n");
         printf("         threshold   Colour detection level 0-255\n\n");
@@ -104,7 +104,7 @@ void main(int argc, char *argv[])
 
 			/* read header */
         result=fread(header,13,1,fp1);
-        if(result!=1)
+        if(ferror(fp1)!=0)
         {
             printf("Error reading %s\n",argv[1]);
 				fclose(fp1);
@@ -127,13 +127,15 @@ void main(int argc, char *argv[])
         };
 
         result=fread(screen,datlen,1,fp1);
-        if(result!=1)
+        if(ferror(fp1) != 0)
         {
             printf("Error reading %s\n",argv[1]);
 				fclose(fp1);
 				fclose(fp2);
             exit(1);
         };
+
+	fclose(fp1);
 
         data = malloc(datlen);
         if(data == NULL)
@@ -454,7 +456,6 @@ for(a=0;a<8;a++)
 	        if(result!=1)
 	        {
 	            printf("Error writing to %s\n",argv[2]);
-	  				fclose(fp1);
 					fclose(fp2);
 
 	            exit(1);
@@ -467,7 +468,6 @@ for(a=0;a<8;a++)
 		        if(result!=1)
 		        {
             		printf("Error writing to %s\n",argv[2]);
-  						fclose(fp1);
 						fclose(fp2);
 
 		            exit(1);
@@ -481,7 +481,6 @@ for(a=0;a<8;a++)
 
         printf("Finished.\n");
 
-        fclose(fp1);
         fclose(fp2);
         free(data);
         free(screen);
