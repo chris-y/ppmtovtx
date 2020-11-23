@@ -462,7 +462,7 @@ for(a=0;a<8;a++)
 	        };
 	} else {
 		for(a=0;a<height;a++) {
-			fprintf(fp2,"OL,%ld,",a);
+			fprintf(fp2,"OL,%d,",a);
 			result=fwrite(data+(40*a),40,1,fp2);
 
 		        if(result!=1)
