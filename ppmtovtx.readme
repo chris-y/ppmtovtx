@@ -1,0 +1,150 @@
+Short:       PPM to Videotex (Teletext/Viewdata)
+Uploader:    unsatisfactory@bigfoot.com
+Author:      unsatisfactory@bigfoot.com (Chris Young)
+Type:        gfx/pbm
+Version:     1.2
+Homepage:    www.unsatisfactory.freeserve.co.uk/ppmtovtx
+AppName:     ppmtovtx
+FileName:    ppmtovtx.zip
+AuthorName:  Chris Young
+AuthorEmail: unsatisfactory@bigfoot.com
+AuthorAD:    AD2187
+SDKVersion:  1.1,1.2
+Thumbshot:   http://www.unsatisfactory.freeserve.co.uk/ppmtovtx/images/knife_t.png
+Screenshot:  http://www.unsatisfactory.freeserve.co.uk/ppmtovtx/images/knife.png
+Publisher:   Unsatisfactory Software
+
+ppmtovtx converts pictures into Videotex (CEPT-3) format.  The Videotex format
+is shared with Teletext (Level 1) services such as Ceefax, and Viewdata
+services such as Prestel or Minitel.
+
+A Videotex frame is made up of 24 rows of 40 characters.  These characters can
+be either printable ASCII characters, mosaic graphics or formatting commands.
+The format allows for 8 colours including black, and a graphics resolution of
+80x72.  Typically the first row on a Videotex service is a header row showing
+the page number and service name, so the actual useable height is reduced to
+23 rows, or 69 mosaic pixels.
+
+ppmtovtx expects binary PPM files with a width of 80 pixels.  The height can
+be anything up to 72 pixels, and should be divisible by three.  The behaviour
+of the program in other cases is undocumented.  The usual height would be 69
+pixels, which gives 23 rows of Videotex data.  You can scale pictures to this
+size using the following command:
+
+pnmscale -xsize 80 -ysize 69 picture.ppm >scaledpicture.ppm
+
+Where "picture.ppm" is the name of the original file, and "scaledpicture.ppm"
+is the destination (NB: the ">" is required).  pnmscale and tools to convert
+to and from PPM format files are available in the NetPBM package. (NetPBM is
+available from http://netpbm.sourceforge.net and an Amiga port is on Aminet)
+
+You can then convert this into a Videotex frame using:
+
+ppmtovtx scaledpicture.ppm scaledpicture.bin
+
+Where "scaledpicture.ppm" is the input file, and "scaledpicture.bin" is the
+output file in raw data format.
+
+There are more options for ppmtocept3:
+
+ppmtovtx <input file> <output file> [options [threshold]]
+
+The output filename should end in ".bin" for a raw format file, or anything
+else for an ESC coded file.  The ESC coded files (which I call .vtx format)
+can be loaded by PstView amongst others, but .bin format is more widely used.
+
+Options are one or more of {SHAKRGYBMCW} (case sensitive), as follows:
+
+S - Separate mode
+    Separates the mosaic graphics pixels.
+
+H - Held graphics mode
+    During colour changes the block with the colour change will be a
+    duplicate of the previous block.  Probably not very useful.
+
+A - Automatic background colour changes
+    Changes the background colour to improve the colour resolution of the
+    picture. 
+
+D - Disable black foreground
+    Prevents ppmtovtx using the code for black foreground colour (more compatible)
+    Only works with "A" mode enabled.
+
+K - Black background (default)
+R - Red background
+G - Green background
+Y - Yellow background
+B - Blue background
+M - Magenta background
+C - Cyan background
+W - White background
+
+It makes no sense to specify more than one of {AKRGYBMCW}.  Later colours
+override earlier ones, and in conjunction with A at most only the start of the
+first row will be of the specified colour.
+
+=====
+History
+-------
+
+1.2 (23.03.2002)
+* Added an option to prevent ppmtovtx inserting a code for black foreground colour.
+  Black foreground is not officially supported.  ppmtovtx will use a workaround instead.
+
+* Defaulted output to use .bin format if an extension was not recognised, rather than .vtx
+
+1.1 (16.03.2002)
+* Fixed a bug where full foreground colour blocks would sometimes be in the
+  background colour
+
+* Fixed another bug which caused some of the picture to be in the background colour
+  thus not being visible.
+
+1.0 (07.01.2002)
+* First release
+
+=====
+Additional notes for included executables:
+
+AmigaOS
+-------
+Copy the file Amiga/ppmtovtx to somewhere in your path (eg. SYS:C)
+You should increase the stack before running this program (issue the
+command "STACK 50000")
+There seems to be a bug which occasionally causes a Suspend/Reboot requester
+when the program exits (if you run it more than once) that I haven't managed to
+track down.
+
+DOS/Windows
+-----------
+Copy the file DOS/PPMTOVTX.EXE to somewhere in your path (usually
+C:\WINDOWS\COMMAND or C:\WINNT)
+The compiler I used seems to have caused a bug when writing .bin format data -
+occasionally the output includes a code for red text.  I advise recompiling
+from the source code if at all possible.
+
+intent/AmigaDE
+--------------
+Copy the contents of the intent directory to the root of the intent filesystem
+(usually c:\intent)
+No known bugs in this version.
+
+=====
+These executable files and source code (in ANSI C) can be freely distributed
+provided no money changes hands (excluding reasonable costs for media or
+delivery) and the author is acknowledged and this .readme file is included with
+the distribution.  The executable MUST NOT be distributed without the source
+code, although it is permitted to distribute the source code without any compiled
+binaries.  Modified binaries and source code MUST NOT be distributed without
+reasonable contact details for the person who modified them (eg email address).
+The author does not accept any responsibility for loss of data or other events
+arising from the use of this software.  All use is at your own risk.  Any changes
+made by third parties are their responsibility and not that of the original author.
+The original author retains copyright for the original source and any binary
+created using that source code.  Although unlikely, permission to distribute or
+use this source code or a resulting executable can be revoked at any time and
+without warning.  This licence covers both commercial and non-commercial use.  If
+you do not agree with these terms you must immediately delete this software package.
+
+-- Chris Young, 13th January 2002
+http://www.unsatisfactory.freeserve.co.uk
