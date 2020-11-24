@@ -23,7 +23,7 @@ void main(int argc, char *argv[])
     char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0,*mono=0;
     char *ver = "ppmtovtx 1.4 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.4 (24.11.2020)\0$STACK:50000\0";
 
-	threshold=170; /*50;*/ /* 180; */
+	threshold=125; /*50;*/ /* 180; */
 
     printf("%s\n\n",ver);
 
@@ -69,6 +69,8 @@ void main(int argc, char *argv[])
 			if(tmp!=0) bkg=7;
 			bkga=strchr(argv[3],'A');
 		mono = strchr(argv[3],'N');
+
+		if(mono) threshold = 50;
     	}
 
     	if(argc==5)
@@ -291,7 +293,8 @@ for(a=0;a<9;a++)
 
 for(a=0;a<6;a++)
 {
-	colour[screen[count+6+a]]++; /* we need to check the next block along */
+	if(screen[count+6+a] <= 8)
+		colour[screen[count+6+a]]++; /* we need to check the next block along */
 }
 
 for(a=0;a<8;a++)
@@ -316,6 +319,8 @@ for(a=0;a<8;a++)
 	{
 		best=pbest;
 	}
+
+printf("1:%ld %ld\n", count, datlen, height);
 
 } // end mono
 
@@ -358,9 +363,8 @@ for(a=0;a<8;a++)
 			count=count+6;
 		}
 
-
 	}
-
+printf("2:%ld %ld\n", count, datlen, height);
 	if(best==bkg)
 	{
 		best=bkg+1;
@@ -435,8 +439,8 @@ for(a=0;a<8;a++)
 
 			};
 
+printf("3:%ld %ld\n", count, datlen, height);
 		};
-
 
         printf("Writing CEPT-3 file in ");
         if(format==NULL)
