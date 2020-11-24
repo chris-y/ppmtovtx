@@ -23,7 +23,7 @@ void main(int argc, char *argv[])
     char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0,*mono=0;
     char *ver = "ppmtovtx 1.4 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.4 (24.11.2020)\0$STACK:50000\0";
 
-	threshold=125; /*50;*/ /* 180; */
+	threshold=128; /*50;*/ /* 180; */
 
     printf("%s\n\n",ver);
 
@@ -70,7 +70,7 @@ void main(int argc, char *argv[])
 			bkga=strchr(argv[3],'A');
 		mono = strchr(argv[3],'N');
 
-		if(mono) threshold = 50;
+		//if(mono) threshold = 50;
     	}
 
     	if(argc==5)
