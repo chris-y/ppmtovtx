@@ -320,8 +320,6 @@ for(a=0;a<8;a++)
 		best=pbest;
 	}
 
-printf("1:%ld %ld\n", count, datlen, height);
-
 } // end mono
 
 	if(best!=pbest && chars<39) /* chars==0) */
@@ -364,7 +362,7 @@ printf("1:%ld %ld\n", count, datlen, height);
 		}
 
 	}
-printf("2:%ld %ld\n", count, datlen, height);
+
 	if(best==bkg)
 	{
 		best=bkg+1;
@@ -439,7 +437,6 @@ printf("2:%ld %ld\n", count, datlen, height);
 
 			};
 
-printf("3:%ld %ld\n", count, datlen, height);
 		};
 
         printf("Writing CEPT-3 file in ");
