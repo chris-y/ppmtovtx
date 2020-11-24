@@ -20,8 +20,8 @@ void main(int argc, char *argv[])
     unsigned char esc=27,header[13],*data,*screen,colour[9],base=80,bkg=0,sepc=90,holdc=94,bkgc=93,bkgr=92;
     int threshold,count,count2,ptrd,ptrs,mosaic,result,textdata,chars,best=0,a,pbest=0,height,datlen;
     bool tti=false;
-    char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0;
-    char *ver = "ppmtovtx 1.4 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.4 (23.11.2020)\0$STACK:50000\0";
+    char *hold=0,*bkga=0,*sep=0,*tmp,*format=0,*nbf=0,*mono=0;
+    char *ver = "ppmtovtx 1.4 by Chris Young <chris@unsatisfactorysoftware.co.uk>\0$VER: ppmtovtx 1.4 (24.11.2020)\0$STACK:50000\0";
 
 	threshold=170; /*50;*/ /* 180; */
 
@@ -38,7 +38,7 @@ void main(int argc, char *argv[])
 		  printf("         H Held graphics                   R Red background\n");
 		  printf("         A Automatic background colour     G Green background\n");
 		  printf("         D Disallow black foreground       Y Yellow background\n");
-		  printf("                                           B Blue background\n");
+		  printf("         N No colour (monochrome)          B Blue background\n");
 		  printf("                                           M Magenta background\n");
 		  printf("                                           C Cyan background\n");
 		  printf("                                           W White background\n\n");
@@ -68,6 +68,7 @@ void main(int argc, char *argv[])
 			tmp=strchr(argv[3],'W');
 			if(tmp!=0) bkg=7;
 			bkga=strchr(argv[3],'A');
+		mono = strchr(argv[3],'N');
     	}
 
     	if(argc==5)
@@ -279,6 +280,10 @@ pbest=0;
 
 if(best>7) best=0;
 
+if(mono) {
+	best = 7;
+} else {
+
 for(a=0;a<9;a++)
 {
 	colour[a]=0;
@@ -311,6 +316,8 @@ for(a=0;a<8;a++)
 	{
 		best=pbest;
 	}
+
+} // end mono
 
 	if(best!=pbest && chars<39) /* chars==0) */
 	{
