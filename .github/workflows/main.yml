@@ -1,0 +1,21 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+ 
+jobs:
+  build_ppc:
+    runs-on: ubuntu-latest
+    container:
+      image: amigadev/crosstools:ppc-amigaos
+    name: build_os4
+    steps:
+      - uses: actions/checkout@v2
+      - name: build_os4
+        id: build_os4
+        run: make -f Makefile
+      - uses: actions/upload-artifact@v1
+        with:
+          name: ppmtovtx_os4
+          path: ppmtovtx
